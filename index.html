@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eagle Electronics | Professional Components</title>
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent: #f97316;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+            --whatsapp: #25D366;
+            --border: #334155;
+            --nav-height: 70px;
+        }
+
+        /* --- RESET & BASE STYLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        
+        html { scroll-behavior: smooth; }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- UTILITIES --- */
+        button { cursor: pointer; border: none; border-radius: 6px; font-weight: 600; transition: all 0.2s; }
+        
+        input, textarea, select {
+            background-color: var(--bg-input); border: 1px solid var(--border);
+            color: var(--text-main); padding: 12px; border-radius: 6px; width: 100%; margin-bottom: 10px;
+            font-size: 1rem; -webkit-appearance: none;
+        }
+        input:focus, textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
+        
+        .btn-primary { background-color: var(--primary); color: white; padding: 12px 24px; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        .btn-accent { 
+            background: linear-gradient(45deg, #f97316, #ef4444); color: white; 
+            padding: 14px 40px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+        }
+        .btn-accent:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6); }
+
+        .btn-danger { background-color: var(--danger); color: white; padding: 8px 16px; font-size: 0.9rem; }
+        .btn-edit { background-color: var(--bg-input); color: var(--text-main); padding: 8px 16px; margin-right: 5px; font-size: 0.9rem; }
+
+        /* --- NAVBAR --- */
+        nav {
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            height: var(--nav-height);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 2rem; position: fixed; top: 0; width: 100%; z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo { 
+            font-size: clamp(1.2rem, 2vw, 1.5rem); 
+            font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; text-decoration: none; 
+            white-space: nowrap;
+        }
+        .logo span { color: var(--primary); }
+
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links li a {
+            color: var(--text-muted); text-decoration: none; font-weight: 500;
+            transition: color 0.2s; cursor: pointer; font-size: 1rem;
+        }
+        .nav-links li a:hover, .nav-links li a.active { color: var(--primary); }
+
+        .admin-controls { display: flex; align-items: center; gap: 15px; }
+
+        .admin-icon {
+            width: 40px; height: 40px; border-radius: 50%; background-color: var(--bg-input);
+            background-image: url('https://picsum.photos/seed/admin/40/40');
+            background-size: cover; background-position: center; cursor: pointer;
+            border: 2px solid transparent; transition: border-color 0.2s; position: relative;
+        }
+        .admin-icon:hover { border-color: var(--primary); }
+        .admin-icon.online::after {
+            content: ''; position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px;
+            background-color: var(--success); border-radius: 50%; border: 2px solid var(--bg-card);
+        }
+
+        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
+        .hamburger span { width: 25px; height: 3px; background-color: var(--text-main); border-radius: 3px; }
+
+        /* --- MAIN LAYOUT & VIEWS --- */
+        main { margin-top: var(--nav-height); flex: 1; position: relative; }
+        
+        .view-container {
+            display: none; 
+            animation: fadeIn 0.4s ease;
+            padding-bottom: 2rem;
+        }
+        .view-container.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        section { padding: 5rem 2rem; max-width: 1200px; margin: 0 auto; }
+
+        /* --- HOME SECTIONS --- */
+        .hero {
+            min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 70%);
+        }
+        .hero h1 { font-size: clamp(2.5rem, 5vw, 3.5rem); margin-bottom: 1rem; line-height: 1.1; }
+        .hero p { font-size: clamp(1rem, 2vw, 1.2rem); color: var(--text-muted); max-width: 600px; margin-bottom: 2rem; }
+
+        .section-title { font-size: 2rem; color: var(--primary); margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 10px; display: inline-block; }
+        
+        .content-card { background-color: var(--bg-card); padding: 2rem; border-radius: 12px; border: 1px solid var(--border); }
+        
+        /* --- CONTACT GRID (Responsive) --- */
+        .contact-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 2rem; 
+            margin-top: 2rem; 
+        }
+        .contact-item { 
+            background: rgba(255,255,255,0.05); 
+            padding: 2rem; 
+            border-radius: 12px; 
+            text-align: center; 
+            transition: transform 0.2s;
+            border: 1px solid transparent;
+        }
+        .contact-item:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .contact-item h4 { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px; }
+        .contact-item p { font-weight: 700; font-size: 1.3rem; word-break: break-word; }
+
+        /* --- SERVICES PAGE --- */
+        .services-header {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;
+            padding: 2rem; max-width: 1200px; margin: 0 auto;
+        }
+        .search-bar { position: relative; width: 100%; max-width: 400px; }
+        .search-bar input { padding-left: 45px; margin-bottom: 0; height: 50px; border-radius: 8px; }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+        .products-grid {
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 2rem;
+            padding: 0 2rem; max-width: 1200px; margin: 0 auto;
+        }
+
+        .product-card {
+            background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+            overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+
+        .product-img { width: 100%; height: 220px; object-fit: cover; background-color: #000; }
+        
+        .category-badge {
+            position: absolute; top: 15px; right: 15px; background-color: rgba(0,0,0,0.7);
+            color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; text-transform: uppercase; font-weight: bold;
+        }
+
+        .prod-info { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .prod-name { font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .prod-cat { color: var(--primary); font-size: 0.85rem; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .prod-desc { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1rem; flex-grow: 1; }
+        .prod-price { font-size: 1.5rem; font-weight: bold; color: var(--text-main); margin-bottom: 1rem; }
+
+        .btn-whatsapp {
+            background-color: var(--whatsapp); color: white; width: 100%; padding: 12px;
+            display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;
+            font-weight: 700; font-size: 1rem; border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        .btn-whatsapp:hover { background-color: #1ebc57; }
+
+        .admin-actions { border-top: 1px solid var(--border); padding: 12px 1.5rem; display: none; justify-content: flex-end; background-color: rgba(0,0,0,0.2); }
+        .admin-actions.visible { display: flex; }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--bg-card); border-top: 1px solid var(--border);
+            padding: 3rem 2rem; text-align: center; margin-top: auto;
+        }
+        .footer-socials { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; }
+        
+        .social-icon {
+            width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.8rem; transition: transform 0.2s; text-decoration: none;
+        }
+        .social-icon:hover { transform: scale(1.1) rotate(5deg); }
+
+        /* Instagram Gradient */
+        .icon-insta {
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+            box-shadow: 0 4px 15px rgba(214, 36, 159, 0.4);
+        }
+
+        /* Email Style */
+        .icon-email {
+            background-color: var(--primary); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .edit-btn-float {
+            margin-top: 1.5rem; font-size: 0.9rem; padding: 8px 12px; background: var(--bg-input);
+            border: 1px dashed var(--text-muted); width: auto; display: inline-block;
+        }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+            z-index: 2000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px);
+            padding: 1rem;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal { 
+            background: var(--bg-card); padding: 2rem; border-radius: 12px; width: 100%; max-width: 550px; 
+            border: 1px solid var(--border); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); 
+        }
+        .modal-header { font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--primary); font-weight: bold; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem; }
+
+        /* --- TOAST --- */
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--bg-card); border-left: 4px solid var(--primary); color: white; padding: 15px 20px; border-radius: 4px; box-shadow: 0 10px 15px rgba(0,0,0,0.3); animation: slideIn 0.3s ease; min-width: 280px; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* --- RESPONSIVE QUERIES --- */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; flex-direction: column; position: absolute; top: var(--nav-height); left: 0;
+                width: 100%; background: var(--bg-card); padding: 1rem; border-bottom: 1px solid var(--border);
+                gap: 1rem;
+            }
+            .nav-links.mobile-open { display: flex; }
+            .nav-links li a { display: block; padding: 0.5rem; }
+            .hamburger { display: flex; }
+            .hero { padding: 2rem 1rem; }
+            .section { padding: 3rem 1rem; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .modal { width: 95%; padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <a href="#" class="logo" onclick="app.navHome()">EAGLE<span>ELECTRONICS</span></a>
+        
+        <ul class="nav-links" id="navLinks">
+            <li><a onclick="app.navHome()">Home</a></li>
+            <li><a onclick="app.navServices()">Services</a></li>
+            <li><a onclick="app.scrollToSection('about')">About Us</a></li>
+            <li><a onclick="app.scrollToSection('contact')">Contact</a></li>
+        </ul>
+
+        <div class="admin-controls">
+            <input type="file" id="adminAvatarInput" accept="image/*" style="display: none;">
+            <div class="admin-icon" id="adminIcon" title="Admin Profile"></div>
+            <div class="hamburger" id="hamburger">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN VIEW (Home + About + Contact) -->
+    <div id="view-home" class="view-container active">
+        <!-- Hero -->
+        <section class="hero">
+            <h1 id="heroTitle">Precision Components<br>for Innovators</h1>
+            <p id="heroTagline">Your trusted source for high-quality electronic components, modules, and sensors.</p>
+            <button class="btn-accent" onclick="app.navServices()">Explore Services</button>
+        </section>
+
+        <!-- About Us -->
+        <section id="about">
+            <div class="section-title">About Us</div>
+            <div class="content-card editable-section" data-key="aboutContent">
+                <h3>Who We Are</h3>
+                <p style="margin-top: 15px; color: var(--text-muted);">
+                    Eagle Electronics is a premier provider of electronic components for hobbyists, engineers, and industrial partners. 
+                    We pride ourselves on quality assurance, rapid shipping, and expert technical support.
+                </p>
+                <br>
+                <ul style="margin-left: 20px; color: var(--text-muted);">
+                    <li>High-Quality Components</li>
+                    <li>Fast Global Shipping</li>
+                    <li>Expert Support</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact">
+            <div class="section-title">Contact Us</div>
+            <div class="content-card">
+                <!-- Contact Grid (Admin Editable) -->
+                <div class="contact-grid editable-section" data-key="contactContent">
+                    <div class="contact-item">
+                        <h4>Phone</h4>
+                        <p id="displayContactPhone">+919345595713</p>
+                    </div>
+                    <div class="contact-item">
+                        <h4>WhatsApp</h4>
+                        <p id="displayContactWa">+917603921863</p>
+                    </div>
+                    <div class="contact-item">
+                        <h4>Email</h4>
+                        <p id="displayContactEmail">eagleelectronics49@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-socials">
+                <a href="#" target="_blank" class="social-icon icon-insta" id="footerInsta" title="Instagram">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+                <a href="#" class="social-icon icon-email" id="footerEmail" title="Email Us">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                </a>
+            </div>
+            <p id="footerText" style="color: var(--text-muted); font-size: 0.9rem;">&copy; 2023 Eagle Electronics. All rights reserved.</p>
+            <button id="editFooterBtn" class="edit-btn-float" onclick="app.openSettings()">Admin Settings</button>
+        </footer>
+    </div>
+
+    <!-- SERVICES VIEW (Separate Page Simulation) -->
+    <div id="view-services" class="view-container">
+        <div class="services-header">
+            <div>
+                
+                <p style="color:var(--text-muted);">Browse our wide range of electronic parts</p>
+            </div>
+            <div style="display:flex; gap:15px; align-items:center; width:100%; max-width:900px; justify-content:space-between; flex-wrap:wrap;">
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search for parts (e.g., ESP32, Resistor)...">
+                </div>
+                <button id="btnAddItem" class="btn-primary" style="display:none;" onclick="app.openProductModal()">+ Add Component</button>
+            </div>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            <!-- Products injected here -->
+        </div>
+        <div id="noResults" style="text-align:center; color:var(--text-muted); display:none; width:100%; grid-column:1/-1; padding:3rem;">
+            <h3>No components found.</h3>
+            <p>Try searching for a different name or category.</p>
+        </div>
+
+        <!-- Footer Repeated for Services View -->
+        <footer>
+            <div class="footer-socials">
+                <a href="#" target="_blank" class="social-icon icon-insta" id="footerInsta2">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+                <a href="#" class="social-icon icon-email" id="footerEmail2">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                </a>
+            </div>
+            <p id="footerText2" style="color: var(--text-muted); font-size: 0.9rem;">&copy; 2023 Eagle Electronics. All rights reserved.</p>
+            <button id="editFooterBtn2" class="edit-btn-float" onclick="app.openSettings()">Admin Settings</button>
+        </footer>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <div class="modal-header">Admin Login</div>
+            <form id="loginForm">
+                <label style="display:block; margin-bottom:5px; font-weight:600;">Username</label>
+                <input type="text" id="username" required>
+                <label style="display:block; margin-bottom:5px; font-weight:600;">Password</label>
+                <input type="password" id="password" required>
+                <div class="modal-footer">
+                    <button type="button" class="btn-edit" onclick="app.closeModal('loginModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT TEXT MODAL -->
+    <div class="modal-overlay" id="editTextModal">
+        <div class="modal">
+            <div class="modal-header">Edit Content</div>
+            <textarea id="editTextarea" rows="12" style="font-family: monospace;"></textarea>
+            <div class="modal-footer">
+                <button type="button" class="btn-edit" onclick="app.closeModal('editTextModal')">Cancel</button>
+                <button type="button" class="btn-primary" onclick="app.saveTextContent()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">Admin Settings</div>
+            
+            <label style="display:block; margin-bottom:5px; font-weight:600;">Instagram Profile URL</label>
+            <input type="text" id="inputInsta" placeholder="https://instagram.com/...">
+            
+            <label style="display:block; margin-bottom:5px; font-weight:600;">Email Address</label>
+            <input type="text" id="inputEmail" placeholder="email@example.com">
+
+            <label style="display:block; margin-bottom:5px; font-weight:600;">Phone Number</label>
+            <input type="text" id="inputPhone" placeholder="+91 ...">
+
+            <label style="display:block; margin-bottom:5px; font-weight:600;">WhatsApp Number (For Orders)</label>
+            <input type="text" id="inputWa" placeholder="+91 ...">
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Format: Include country code (e.g. +91)</p>
+
+            <label style="display:block; margin-bottom:5px; font-weight:600;">Footer Text / Copyright</label>
+            <input type="text" id="inputFooter" placeholder="&copy; 2023 ...">
+
+            <div class="modal-footer">
+                <button type="button" class="btn-edit" onclick="app.closeModal('settingsModal')">Cancel</button>
+                <button type="button" class="btn-primary" onclick="app.saveSettings()">Update Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCT MODAL -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal">
+            <div class="modal-header" id="productModalTitle">Add Component</div>
+            <form id="productForm">
+                <input type="hidden" id="prodId">
+                <label style="display:block; margin-bottom:5px; font-weight:600;">Image</label>
+                <input type="file" id="prodImageInput" accept="image/*">
+                <input type="hidden" id="prodImageBase64">
+
+                <label style="display:block; margin-bottom:5px; font-weight:600;">Name</label>
+                <input type="text" id="prodName" required>
+
+                <label style="display:block; margin-bottom:5px; font-weight:600;">Category</label>
+                <select id="prodCategory">
+                    <option value="Microcontrollers">Microcontrollers</option>
+                    <option value="Sensors">Sensors</option>
+                    <option value="Power">Power</option>
+                    <option value="Communication">Communication</option>
+                    <option value="Passives">Passives</option>
+                </select>
+
+                <label style="display:block; margin-bottom:5px; font-weight:600;">Price₹</label>
+                <input type="number" step="0.01" id="prodPrice" required>
+
+                <label style="display:block; margin-bottom:5px; font-weight:600;">Description</label>
+                <textarea id="prodDesc" rows="3" required></textarea>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-edit" onclick="app.closeModal('productModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        const app = {
+            state: {
+                isLoggedIn: false,
+                adminAvatar: "https://picsum.photos/seed/admin/40/40",
+                content: {
+                    heroTitle: "Precision Components<br>for Innovators",
+                    heroTagline: "Your trusted source for high-quality electronic components, modules, and sensors.",
+                    aboutContent: `<h3>Who We Are</h3><p style="margin-top: 15px; color: var(--text-muted);">Eagle Electronics is a premier provider of electronic components for hobbyists, engineers, and industrial partners. We pride ourselves on quality assurance, rapid shipping, and expert technical support.</p><br><ul style="margin-left: 20px; color: var(--text-muted);"><li>High-Quality Components</li><li>Fast Global Shipping</li><li>Expert Support</li></ul>`,
+                    contactContent: `<div class="contact-grid"><div class="contact-item"><h4>Phone</h4><p id="displayContactPhone">+919345595713</p></div><div class="contact-item"><h4>WhatsApp</h4><p id="displayContactWa">+917603921863</p></div><div class="contact-item"><h4>Email</h4><p id="displayContactEmail">eagleelectronics49@gmail.com</p></div></div>`,
+                    footerText: "&copy; 2023 Eagle Electronics. All rights reserved."
+                },
+                settings: {
+                    insta: "https://instagram.com",
+                    email: "eagleelectronics49@gmail.com",
+                    phone: "+919345595713",
+                    wa: "+917603921863",
+                    footerText: "&copy; 2023 Eagle Electronics. All rights reserved."
+                },
+                inventory: [
+                    { id: 1, name: "Arduino Uno R3", category: "Microcontrollers", price: 24.00, desc: "The standard board for electronics enthusiasts.", image: "https://picsum.photos/seed/arduino/300/200" },
+                    { id: 2, name: "ESP32 WROOM", category: "Microcontrollers", price: 9.50, desc: "Dual core WiFi and Bluetooth module.", image: "https://picsum.photos/seed/esp32/300/200" },
+                    { id: 3, name: "HC-SR04 Ultrasonic", category: "Sensors", price: 2.50, desc: "Distance measurement sensor.", image: "https://picsum.photos/seed/ultra/300/200" },
+                    { id: 4, name: "L298N Motor Driver", category: "Power", price: 4.20, desc: "High voltage, high current dual full-bridge driver.", image: "https://picsum.photos/seed/driver/300/200" },
+                    { id: 5, name: "NRF24L01+", category: "Communication", price: 3.00, desc: "2.4GHz ISM band transceiver.", image: "https://picsum.photos/seed/nrf/300/200" },
+                    { id: 6, name: "Resistor Kit (1/4W)", category: "Passives", price: 12.00, desc: "Set of 1000 resistors, various values.", image: "https://picsum.photos/seed/res/300/200" }
+                ],
+                editingKey: null
+            },
+
+            init() {
+                this.loadState();
+                this.setupEvents();
+                this.renderContent();
+                this.checkAuth();
+                this.renderProducts();
+                this.updateSettingsDisplay();
+            },
+
+            loadState() {
+                const saved = localStorage.getItem('eagleElectronicsV3');
+                if(saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        this.state.content = parsed.content || this.state.content;
+                        this.state.inventory = parsed.inventory || this.state.inventory;
+                        this.state.settings = parsed.settings || this.state.settings;
+                        this.state.adminAvatar = parsed.adminAvatar || this.state.adminAvatar;
+                    } catch(e) { console.error("Data load error", e); }
+                }
+            },
+
+            saveState() {
+                const toSave = {
+                    content: this.state.content,
+                    inventory: this.state.inventory,
+                    settings: this.state.settings,
+                    adminAvatar: this.state.adminAvatar
+                };
+                localStorage.setItem('eagleElectronicsV3', JSON.stringify(toSave));
+            },
+
+            setupEvents() {
+                // Mobile Menu
+                document.getElementById('hamburger').addEventListener('click', () => {
+                    document.getElementById('navLinks').classList.toggle('mobile-open');
+                });
+
+                // Admin Icon Click
+                document.getElementById('adminIcon').addEventListener('click', () => {
+                    if(this.state.isLoggedIn) document.getElementById('adminAvatarInput').click();
+                    else this.openModal('loginModal');
+                });
+
+                // Avatar Upload
+                document.getElementById('adminAvatarInput').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if(file) {
+                        const reader = new FileReader();
+                        reader.onload = (evt) => {
+                            this.state.adminAvatar = evt.target.result;
+                            document.getElementById('adminIcon').style.backgroundImage = `url(${this.state.adminAvatar})`;
+                            this.saveState();
+                            this.toast('Profile picture updated');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // Login
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const u = document.getElementById('username').value;
+                    const p = document.getElementById('password').value;
+                    if(u === 'admin' && p === 'admin123') {
+                        this.state.isLoggedIn = true;
+                        this.checkAuth();
+                        this.closeModal('loginModal');
+                        this.toast('Welcome back, Admin', 'success');
+                        document.getElementById('username').value = '';
+                        document.getElementById('password').value = '';
+                    } else {
+                        this.toast('Invalid Credentials', 'error');
+                    }
+                });
+
+                // Product Save
+                document.getElementById('productForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleProductSave();
+                });
+
+                // Product Image
+                document.getElementById('prodImageInput').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if(file) {
+                        const reader = new FileReader();
+                        reader.onload = (evt) => { document.getElementById('prodImageBase64').value = evt.target.result; };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // Search
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    this.filterProducts(e.target.value);
+                });
+            },
+
+            // --- Navigation ---
+            navHome() {
+                this.switchView('view-home');
+                window.scrollTo(0,0);
+            },
+
+            navServices() {
+                this.switchView('view-services');
+                window.scrollTo(0,0);
+            },
+
+            switchView(viewId) {
+                document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+                document.getElementById(viewId).classList.add('active');
+                document.getElementById('navLinks').classList.remove('mobile-open');
+            },
+
+            scrollToSection(sectionId) {
+                if(!document.getElementById('view-home').classList.contains('active')) {
+                    this.switchView('view-home');
+                    setTimeout(() => {
+                        document.getElementById(sectionId).scrollIntoView({behavior:'smooth'});
+                    }, 100);
+                } else {
+                    document.getElementById(sectionId).scrollIntoView({behavior:'smooth'});
+                }
+                document.getElementById('navLinks').classList.remove('mobile-open');
+            },
+
+            // --- Rendering ---
+            renderContent() {
+                document.getElementById('heroTitle').innerHTML = this.state.content.heroTitle;
+                document.getElementById('heroTagline').innerHTML = this.state.content.heroTagline;
+                
+                document.querySelectorAll('.editable-section').forEach(el => {
+                    const key = el.getAttribute('data-key');
+                    if(this.state.content[key]) el.innerHTML = this.state.content[key];
+                });
+            },
+
+            updateSettingsDisplay() {
+                // Update Links in Home Footer
+                document.getElementById('footerInsta').href = this.state.settings.insta;
+                document.getElementById('footerEmail').href = "mailto:" + this.state.settings.email;
+                document.getElementById('footerText').innerHTML = this.state.settings.footerText;
+
+                document.getElementById('footerInsta2').href = this.state.settings.insta;
+                document.getElementById('footerEmail2').href = "mailto:" + this.state.settings.email;
+                document.getElementById('footerText2').innerHTML = this.state.settings.footerText;
+
+                // Update Contact Info (Dynamic IDs injected in content)
+                setTimeout(() => {
+                    const phoneEl = document.getElementById('displayContactPhone');
+                    const waEl = document.getElementById('displayContactWa');
+                    const emailEl = document.getElementById('displayContactEmail');
+                    if(phoneEl) phoneEl.innerText = this.state.settings.phone;
+                    if(waEl) waEl.innerText = this.state.settings.wa; 
+                    if(emailEl) emailEl.innerText = this.state.settings.email;
+                }, 100);
+            },
+
+            renderProducts(list = null) {
+                const grid = document.getElementById('productsGrid');
+                grid.innerHTML = '';
+                const data = list || this.state.inventory;
+
+                if(data.length === 0) {
+                    document.getElementById('noResults').style.display = 'block';
+                } else {
+                    document.getElementById('noResults').style.display = 'none';
+                }
+
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    
+                    // Strip symbols for WA API
+                    const cleanWa = this.state.settings.wa.replace(/[^0-9]/g, '');
+                    const waLink = `https://wa.me/${cleanWa}?text=I am interested in ordering: ${encodeURIComponent(item.name)}`;
+
+                    const adminBtns = this.state.isLoggedIn ? `
+                        <div class="admin-actions visible">
+                            <button class="btn-edit" onclick="app.editProduct(${item.id})">Edit</button>
+                            <button class="btn-danger" onclick="app.deleteProduct(${item.id})">Delete</button>
+                        </div>
+                    ` : '';
+
+                    card.innerHTML = `
+                        <div style="position:relative;">
+                            <img src="${item.image}" class="product-img" alt="${item.name}">
+                            <span class="category-badge">${item.category}</span>
+                        </div>
+                        <div class="prod-info">
+                            <div class="prod-name">${item.name}</div>
+                            <div class="prod-cat">${item.category}</div>
+                            <div class="prod-desc">${item.desc}</div>
+                            <div class="prod-price">₹${parseFloat(item.price).toFixed(2)}</div>
+
+                            <a href="${waLink}" target="_blank" class="btn-whatsapp">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.017-1.04 2.48 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                                Order on WhatsApp
+                            </a>
+                        </div>
+                        ${adminBtns}
+                    `;
+                    grid.appendChild(card);
+                });
+            },
+
+            filterProducts(query) {
+                const q = query.toLowerCase();
+                const filtered = this.state.inventory.filter(i => 
+                    i.name.toLowerCase().includes(q) || 
+                    i.category.toLowerCase().includes(q) ||
+                    i.desc.toLowerCase().includes(q)
+                );
+                this.renderProducts(filtered);
+            },
+
+            checkAuth() {
+                const icon = document.getElementById('adminIcon');
+                const btnAdd = document.getElementById('btnAddItem');
+                const editFooterBtns = document.querySelectorAll('.edit-btn-float');
+                const editSections = document.querySelectorAll('.editable-section');
+
+                icon.style.backgroundImage = `url(${this.state.adminAvatar})`;
+
+                if(this.state.isLoggedIn) {
+                    icon.classList.add('online');
+                    icon.title = "Change Avatar";
+                    btnAdd.style.display = 'block';
+                    editFooterBtns.forEach(b => b.style.display = 'inline-block');
+                    editSections.forEach(s => {
+                        if(!s.querySelector('.edit-btn-float')) {
+                            const btn = document.createElement('button');
+                            btn.className = 'edit-btn-float';
+                            btn.innerText = '✎ Edit Section';
+                            btn.onclick = () => this.openTextEdit(s.getAttribute('data-key'));
+                            s.appendChild(btn);
+                        }
+                    });
+                    this.renderProducts();
+                } else {
+                    icon.classList.remove('online');
+                    icon.title = "Admin Login";
+                    btnAdd.style.display = 'none';
+                    editFooterBtns.forEach(b => b.style.display = 'none');
+                    document.querySelectorAll('.editable-section .edit-btn-float').forEach(b => b.remove());
+                    this.renderProducts();
+                }
+            },
+
+            // --- Editing ---
+            openTextEdit(key) {
+                this.state.editingKey = key;
+                document.getElementById('editTextarea').value = this.state.content[key];
+                this.openModal('editTextModal');
+            },
+
+            saveTextContent() {
+                const val = document.getElementById('editTextarea').value;
+                if(this.state.editingKey) {
+                    this.state.content[this.state.editingKey] = val;
+                    this.saveState();
+                    this.renderContent();
+                    this.updateSettingsDisplay();
+                    this.closeModal('editTextModal');
+                    this.toast('Content saved successfully');
+                }
+            },
+
+            openSettings() {
+                document.getElementById('inputInsta').value = this.state.settings.insta;
+                document.getElementById('inputEmail').value = this.state.settings.email;
+                document.getElementById('inputPhone').value = this.state.settings.phone;
+                document.getElementById('inputWa').value = this.state.settings.wa;
+                document.getElementById('inputFooter').value = this.state.settings.footerText;
+                this.openModal('settingsModal');
+            },
+
+            saveSettings() {
+                this.state.settings.insta = document.getElementById('inputInsta').value;
+                this.state.settings.email = document.getElementById('inputEmail').value;
+                this.state.settings.phone = document.getElementById('inputPhone').value;
+                this.state.settings.wa = document.getElementById('inputWa').value;
+                this.state.settings.footerText = document.getElementById('inputFooter').value;
+                this.state.content.footerText = document.getElementById('inputFooter').value;
+                
+                this.saveState();
+                this.updateSettingsDisplay();
+                this.closeModal('settingsModal');
+                this.renderProducts();
+                this.toast('Settings updated successfully');
+            },
+
+            // --- Products ---
+            openProductModal(id = null) {
+                const form = document.getElementById('productForm');
+                form.reset();
+                document.getElementById('prodImageBase64').value = "";
+
+                if(id) {
+                    const item = this.state.inventory.find(i => i.id === id);
+                    if(item) {
+                        document.getElementById('productModalTitle').innerText = "Edit Component";
+                        document.getElementById('prodId').value = item.id;
+                        document.getElementById('prodName').value = item.name;
+                        document.getElementById('prodCategory').value = item.category;
+                        document.getElementById('prodPrice').value = item.price;
+                        document.getElementById('prodDesc').value = item.desc;
+                        document.getElementById('prodImageBase64').value = item.image;
+                    }
+                } else {
+                    document.getElementById('productModalTitle').innerText = "Add Component";
+                    document.getElementById('prodId').value = "";
+                }
+                this.openModal('productModal');
+            },
+
+            handleProductSave() {
+                const idStr = document.getElementById('prodId').value;
+                const name = document.getElementById('prodName').value;
+                const cat = document.getElementById('prodCategory').value;
+                const price = document.getElementById('prodPrice').value;
+                const desc = document.getElementById('prodDesc').value;
+                const img = document.getElementById('prodImageBase64').value || "https://picsum.photos/seed/" + Math.random().toString(36).substring(7) + "/300/200";
+
+                if(idStr) {
+                    const id = parseInt(idStr);
+                    const idx = this.state.inventory.findIndex(i => i.id === id);
+                    if(idx !== -1) {
+                        this.state.inventory[idx] = { id, name, category: cat, price, desc, image: img };
+                        this.toast('Component updated');
+                    }
+                } else {
+                    const newId = Date.now();
+                    this.state.inventory.unshift({ id: newId, name, category: cat, price, desc, image: img });
+                    this.toast('Component added');
+                }
+                this.saveState();
+                this.renderProducts();
+                this.closeModal('productModal');
+            },
+
+            editProduct(id) { this.openProductModal(id); },
+
+            deleteProduct(id) {
+                if(confirm('Are you sure you want to delete this component?')) {
+                    this.state.inventory = this.state.inventory.filter(i => i.id !== id);
+                    this.saveState();
+                    this.renderProducts();
+                    this.toast('Component deleted');
+                }
+            },
+
+            // --- Utils ---
+            openModal(id) { document.getElementById(id).classList.add('open'); },
+            closeModal(id) { document.getElementById(id).classList.remove('open'); },
+            toast(msg, type='info') {
+                const c = document.getElementById('toastContainer');
+                const t = document.createElement('div');
+                t.className = 'toast';
+                t.style.borderLeftColor = type === 'error' ? 'var(--danger)' : 'var(--primary)';
+                t.innerText = msg;
+                c.appendChild(t);
+                setTimeout(() => t.remove(), 3000);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>
